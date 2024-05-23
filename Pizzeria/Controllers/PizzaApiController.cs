@@ -31,8 +31,15 @@ namespace pizzeria_project.Controllers
 
         // POST api/<PizzaControllerApi>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Pizza pizza)
         {
+            using (PizzaContext db = new())
+            {
+                db.Pizzas.Add(new Pizza(pizza.Name, pizza.Description, pizza.Price, pizza.CategoryId));
+                db.SaveChanges();
+
+                return Ok();
+            }
         }
 
         // PUT api/<PizzaControllerApi>/5
