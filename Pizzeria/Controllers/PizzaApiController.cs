@@ -56,8 +56,16 @@ namespace pizzeria_project.Controllers
 
         // DELETE api/<PizzaControllerApi>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            using PizzaContext db = new();
+            Pizza? pizzaToDelete = db.Pizzas.Find(id);
+            if (pizzaToDelete == null)
+                return NotFound();
+
+            db.Pizzas.Remove(pizzaToDelete);
+            db.SaveChanges();
+            return Ok();
         }
     }
 }
