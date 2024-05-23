@@ -22,9 +22,13 @@ namespace pizzeria_project.Controllers
 
         // GET api/<PizzaControllerApi>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            using PizzaContext db = new();
+            Pizza? pizza = db.Pizzas.Find(id);
+            if (pizza == null)
+                return NotFound();
+            return Ok(pizza);
         }
 
         // POST api/<PizzaControllerApi>
