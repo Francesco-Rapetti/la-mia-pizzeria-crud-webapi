@@ -15,11 +15,9 @@ namespace pizzeria_project.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            using (PizzaContext db = new())
-            {
-                IQueryable<Pizza> pizzas = db.Pizzas;
-                return Ok(pizzas.ToList());
-            }
+            using PizzaContext db = new();
+            IQueryable<Pizza> pizzas = db.Pizzas;
+            return Ok(pizzas.ToList());
         }
 
         // GET api/<PizzaControllerApi>/5
@@ -33,19 +31,27 @@ namespace pizzeria_project.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Pizza pizza)
         {
-            using (PizzaContext db = new())
-            {
-                db.Pizzas.Add(new Pizza(pizza.Name, pizza.Description, pizza.Price, pizza.CategoryId));
-                db.SaveChanges();
+            using PizzaContext db = new();
+            db.Pizzas.Add(new Pizza(pizza.Name, pizza.Description, pizza.Price, pizza.CategoryId));
+            db.SaveChanges();
 
-                return Ok();
-            }
+            return Ok();
         }
 
         // PUT api/<PizzaControllerApi>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] Pizza pizza)
         {
+            using PizzaContext db = new();
+            Pizza? pizzaToEdit = db.Pizzas.Find(id);
+            if (pizzaToEdit == null)
+                return NotFound();
+
+            pizza.Id = id;
+            db.Pizzas.Update(pizza);
+            db.SaveChanges();
+
+            return Ok();
         }
 
         // DELETE api/<PizzaControllerApi>/5
